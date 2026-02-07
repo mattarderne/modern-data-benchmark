@@ -60,13 +60,16 @@ Pass counts below are **out of 3 tasks** per sandbox (ARPU, churn, LTV). This is
 | x-ai/grok-code-fast-1 | 3/3 | 1/3 | 3/3 | 1/3 |
 | arcee-ai/trinity-large-preview:free | 3/3 | 0/3 | 0/3 | 0/3 |
 | qwen/qwen3-coder-next | 3/3 | 0/3 | 1/3 | 1/3 |
+| claude-opus-4-5 | 3/3 | 2/3 | 3/3 | 2/3 |
+| claude-sonnet-4-5 | 2/3 | 2/3 | 1/3 | 1/3 |
+| claude-haiku-4-5 | 1/3 | 0/3 | 2/3 | 0/3 |
 
 ## Cost Curve
 
 **Pareto Performance / Cost Curve**  
 ![Pareto Performance / Cost Curve](artifacts/benchmark_cost_curve.png)
 
-Cost is plotted as **USD per 1M input + 1M output tokens** using OpenRouter pricing (log scale on the x‑axis).
+Cost is plotted as **USD per 1M input + 1M output tokens** using the provided price list (log scale on the x‑axis). Claude Haiku 4.5 uses Anthropic’s published pricing.
 
 ## Detailed Write‑Up
 
