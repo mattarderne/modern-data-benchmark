@@ -61,6 +61,46 @@ Pass counts below are **out of 3 tasks** per sandbox (ARPU, churn, LTV). This is
 | arcee-ai/trinity-large-preview:free | 3/3 | 0/3 | 0/3 | 0/3 |
 | qwen/qwen3-coder-next | 3/3 | 0/3 | 1/3 | 1/3 |
 
+## Charts
+
+The following images are generated from the current benchmark snapshot:
+
+**Pass Rate Matrix (x/3 tasks)**  
+![Pass Rate Matrix](artifacts/benchmark_matrix.png)
+
+**Total Passes per Model (out of 12)**  
+![Total Passes per Model](artifacts/benchmark_model_totals.png)
+
+**Total Passes per Sandbox (out of 21)**  
+![Total Passes per Sandbox](artifacts/benchmark_sandbox_totals.png)
+
+**Pass Breakdown per Model by Sandbox**  
+![Pass Breakdown per Model](artifacts/benchmark_model_stacked.png)
+
+## Detailed Write‑Up
+
+For a fuller narrative (methodology, critique points, and limitations), see:
+- `artifacts/benchmark_report_detailed.docx`
+
+**Method Summary**
+- Tasks: ARPU, churn rate, LTV on a shared synthetic dataset in `data/`.
+- Typed: model writes a function in `sandboxes/typed` and it is imported/executed.
+- DBT: model writes SQL executed in DuckDB.
+- Drizzle: model writes an async query executed against SQLite.
+- Cube: model defines a measure; SQL is extracted and executed in DuckDB.
+
+**Fairness Adjustments**
+- Cube validator no longer injects default filters (status=paid/active).
+- DBT validator accepts common filename variants.
+- Drizzle native module rebuilt for current Node version.
+
+**Limitations / Critique Points**
+- Single-run snapshots are high variance; repeat runs needed for confidence.
+- Some models fail to use tools, causing max-turn failures.
+- Cube validation extracts SQL heuristically; non-standard measure definitions can fail.
+- DBT validation executes SQL directly in DuckDB (not full dbt compilation).
+- Typed validation runs TS via type-stripping (not strict type-checking).
+
 ## How Validation Works (High Level)
 
 - **Typed**: imports and executes the model’s TypeScript function.
