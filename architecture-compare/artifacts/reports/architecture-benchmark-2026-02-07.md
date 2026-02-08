@@ -15,6 +15,39 @@ This experiment intentionally tests schema discovery and unification because the
 - `app-drizzle`: Drizzle ORM over a unified SQLite database containing app + Stripe tables.
 - `warehouse-dbt`: SQL models executed in DuckDB over warehouse-style raw tables with staging/marts.
 
+## Architecture Diagrams
+
+**App + Stripe (TypeScript / app-typed)**
+```mermaid
+flowchart LR
+  AppDB[(App DB)]
+  Stripe[(Stripe)]
+  AppDB -->|users.stripe_customer_id| Stripe
+  AppDB --> TS[TypeScript Analytics]
+  Stripe --> TS
+  TS --> Metric[Metric Output]
+```
+
+**App + Stripe (Drizzle / app-drizzle)**
+```mermaid
+flowchart LR
+  AppDB[(App + Stripe DB)]
+  Drizzle[Drizzle ORM Queries]
+  AppDB --> Drizzle
+  Drizzle --> Metric[Metric Output]
+```
+
+**Warehouse + DBT (warehouse-dbt)**
+```mermaid
+flowchart LR
+  AppDB[(App DB)] --> Rep[Replication]
+  Stripe[(Stripe)] --> Rep
+  Rep --> Raw[(Warehouse Raw Tables)]
+  Raw --> Stg[DBT Staging]
+  Stg --> Marts[DBT Marts]
+  Marts --> Metric[Metric Output]
+```
+
 **Tasks (all require app ↔ Stripe joins)**
 1. **Active User ARPU**
    - Paid invoice total for active users / count of active users.
