@@ -181,8 +181,8 @@ It is *not* a full dbt workflow test: there is no Jinja compilation, `ref`/`sour
 **How is marking done (code correctness vs answer)?**  
 Scoring is outcome‑based: code must execute and return the correct numeric value (within tolerance). There is no semantic grading beyond runtime errors and the numeric output check.
 
-## Next Steps (Optional)
+## Next Steps
 
-- Add multi-run sampling per model for confidence intervals.
-- Track tool usage (which files were read) to separate schema discovery from logic quality.
-- Add drift scenarios to test robustness under sync delays or mapping loss.
+- Add token usage logging for API calls and generate a Pareto cost curve for architecture runs.
+- Evaluate lint/test options per sandbox (dbt compile/test with duckdb adapter, sqlfluff, TS typecheck/ESLint for typed, smoke/unit checks for drizzle, and a minimal validation check for cube measures).
+- Define and test a scoring rubric beyond binary pass/fail (code correctness vs numeric correctness, schema adherence, tool usage, and partial credit).
