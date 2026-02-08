@@ -20,20 +20,26 @@ This experiment intentionally tests schema discovery and unification because the
 **App + Stripe (TypeScript / app-typed)**
 ```mermaid
 flowchart LR
-  AppDB[(App DB)]
-  Stripe[(Stripe)]
-  AppDB -->|users.stripe_customer_id| Stripe
-  AppDB --> TS[TypeScript Analytics]
-  Stripe --> TS
+  AppData[(App Tables JSON)]
+  StripeData[(Stripe Tables JSON)]
+  Loader[In‑memory arrays]
+  AppData --> Loader
+  StripeData --> Loader
+  Loader --> TS[TypeScript Functions\n(join on users.stripe_customer_id → invoices.customer_id)]
   TS --> Metric[Metric Output]
 ```
 
 **App + Stripe (Drizzle / app-drizzle)**
 ```mermaid
 flowchart LR
-  AppDB[(App + Stripe DB)]
-  Drizzle[Drizzle ORM Queries]
-  AppDB --> Drizzle
+  AppData[(App Tables JSON)]
+  StripeData[(Stripe Tables JSON)]
+  LoadDB[Load into SQLite]
+  AppData --> LoadDB
+  StripeData --> LoadDB
+  DB[(Unified SQLite DB)]
+  LoadDB --> DB
+  DB --> Drizzle[Drizzle ORM Queries]
   Drizzle --> Metric[Metric Output]
 ```
 
@@ -42,9 +48,11 @@ flowchart LR
 flowchart LR
   AppDB[(App DB)] --> Rep[Replication]
   Stripe[(Stripe)] --> Rep
-  Rep --> Raw[(Warehouse Raw Tables)]
-  Raw --> Stg[DBT Staging]
-  Stg --> Marts[DBT Marts]
+  Rep --> Raw[(DuckDB Raw Tables)]
+  subgraph DuckDB["DuckDB execution (DBT-style SQL, no dbt compile)"]
+    Raw --> Stg[Staging SQL]
+    Stg --> Marts[Marts SQL]
+  end
   Marts --> Metric[Metric Output]
 ```
 
