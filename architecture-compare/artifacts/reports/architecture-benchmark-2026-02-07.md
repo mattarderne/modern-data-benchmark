@@ -187,6 +187,29 @@ Token usage and cost (mean per run):
 
 ![Architecture Benchmark Rubric Score (Linted Sonnet, n=2)](architecture_benchmark_rubric_model_2026-02-08-lint-2pass.png)
 
+## Lint Helper (Option B) Sonnet Runs (n=2, max-turns=10)
+
+Linting enabled with **TypeScript typecheck** (`tsc --noEmit`) and **SQLFluff + DuckDB EXPLAIN** for DBT.  
+When lint fails, the model gets a short fix attempt (3 turns max), then validation proceeds regardless.
+
+Mean passes per sandbox (out of 3 tasks), averaged over 2 runs:
+
+| Model | app-typed | app-drizzle | warehouse-dbt | Overall (out of 9) |
+|---|---:|---:|---:|---:|
+| claude-sonnet-4-20250514 | 1.00 | 2.00 | 0.50 | 3.50 |
+
+Per‑run totals (out of 9): 3, 4
+
+Token usage and cost (mean per run):
+- Input tokens: 229,600
+- Output tokens: 50,590
+- Cost per run: $1.4476
+- Cost per pass: $0.4136
+
+![Architecture Benchmark Cost Curve (Lint Helper, n=2)](architecture_benchmark_cost_curve_2026-02-08-lint-helper-2pass.png)
+
+![Architecture Benchmark Rubric Score (Lint Helper, n=2)](architecture_benchmark_rubric_model_2026-02-08-lint-helper-2pass.png)
+
 ## Charts
 
 ![Architecture Benchmark Matrix](architecture_benchmark_matrix.png)

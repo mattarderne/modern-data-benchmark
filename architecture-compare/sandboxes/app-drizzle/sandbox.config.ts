@@ -2,6 +2,11 @@ import type { SandboxConfig, Task, ValidationResult } from '../types';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PROJECT_DIR = path.resolve(__dirname, '..', '..');
 
 export const config: SandboxConfig = {
   id: 'app-drizzle',
@@ -146,16 +151,21 @@ console.log(JSON.stringify({ result: typeof result === 'number' ? result : null 
       return { valid: false, error: 'queries.ts not found for linting' };
     }
     try {
-      execSync('node --experimental-strip-types --check src/queries.ts 2>&1', {
-        cwd: sandboxDir,
+      const tscPath = path.join(PROJECT_DIR, 'node_modules', '.bin', 'tsc');
+      if (!fs.existsSync(tscPath)) {
+        return { valid: false, error: 'TypeScript not installed. Run npm install in architecture-compare.' };
+      }
+      const projectPath = path.join(sandboxDir, 'tsconfig.json');
+      execSync(`\"${tscPath}\" -p \"${projectPath}\" --noEmit 2>&1`, {
+        cwd: PROJECT_DIR,
         encoding: 'utf8',
-        timeout: 15000,
+        timeout: 20000,
         env: { ...process.env, NODE_NO_WARNINGS: '1' },
       });
       return { valid: true };
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      return { valid: false, error: `TypeScript syntax check failed: ${message}` };
+      const output = (err as any)?.stdout?.toString() || (err instanceof Error ? err.message : String(err));
+      return { valid: false, error: `TypeScript typecheck failed: ${output.slice(0, 400)}` };
     }
   },
 };

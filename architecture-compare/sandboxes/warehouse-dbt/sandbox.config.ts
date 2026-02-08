@@ -2,6 +2,11 @@ import type { SandboxConfig, Task, ValidationResult } from '../types';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PROJECT_DIR = path.resolve(__dirname, '..', '..');
 
 function resolveSqlPath(sandboxDir: string, task: Task): string | null {
   const stagingDir = path.join(sandboxDir, 'models/staging');
@@ -252,6 +257,17 @@ db.all(sql, (err, rows) => {
     const sql = fs.readFileSync(actualSqlPath, 'utf8');
     if (!sql.toLowerCase().includes('select')) {
       return { valid: false, error: 'SQL does not contain SELECT' };
+    }
+
+    try {
+      execSync(`python3 -m sqlfluff lint --dialect duckdb --nocolor "${actualSqlPath}" 2>&1`, {
+        cwd: PROJECT_DIR,
+        encoding: 'utf8',
+        timeout: 30000,
+      });
+    } catch (err) {
+      const output = (err as any)?.stdout?.toString() || (err instanceof Error ? err.message : String(err));
+      return { valid: false, error: `SQLFluff lint failed: ${output.slice(0, 300)}` };
     }
 
     const viewStatements = buildViewStatements(sandboxDir, actualSqlPath);

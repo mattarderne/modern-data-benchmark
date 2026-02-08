@@ -557,9 +557,10 @@ async function runAgent(
   model: string,
   maxTurns: number,
   toolUsage?: ToolUsage,
-  tokenUsage?: TokenUsage
+  tokenUsage?: TokenUsage,
+  promptOverride?: string
 ): Promise<{ success: boolean; turns: number; error?: string }> {
-  const taskPrompt = config.taskPrompt(task);
+  const taskPrompt = promptOverride ?? config.taskPrompt(task);
 
   const messages: Array<{ role: 'user' | 'assistant'; content: string }> = [
     { role: 'user', content: taskPrompt }
@@ -635,6 +636,7 @@ async function runBenchmark(
       const toolUsage: ToolUsage = { readFiles: [], listFiles: [], writeFiles: [] };
       const tokenUsage: TokenUsage = { inputTokens: 0, outputTokens: 0, totalTokens: 0 };
       let lintResult: ValidationResult | undefined;
+      let turnsUsed = 0;
 
       if (config.setup) {
         await config.setup(sandboxDir);
@@ -650,6 +652,7 @@ async function runBenchmark(
         toolUsage,
         tokenUsage
       );
+      turnsUsed += agentResult.turns;
 
       if (!agentResult.success) {
         console.log(`\n  ✗ FAIL: ${agentResult.error}`);
@@ -660,7 +663,7 @@ async function runBenchmark(
           task,
           pass: false,
           expected,
-          turns: agentResult.turns,
+          turns: turnsUsed,
           error: agentResult.error,
           durationMs: Date.now() - startTime,
           toolUsage,
@@ -676,22 +679,27 @@ async function runBenchmark(
         lintResult = await config.lint(sandboxDir, task);
         if (!lintResult.valid) {
           console.log(`\n  ✗ LINT FAIL: ${lintResult.error}`);
-          const rubric = computeRubric(config, false, false, lintResult.error, toolUsage);
-          results.push({
-            sandbox: sandboxId,
-            model,
+          console.log('  Attempting lint fix (1 turn window)...');
+          const fixPrompt = `${config.taskPrompt(task)}\n\nLint error:\n${lintResult.error}\n\nFix the code and use tools. When done, call <tool>done</tool>.`;
+          const fixResult = await runAgent(
+            config,
             task,
-            pass: false,
-            expected,
-            turns: agentResult.turns,
-            error: lintResult.error,
-            durationMs: Date.now() - startTime,
+            sandboxDir,
+            model,
+            Math.min(3, maxTurns),
             toolUsage,
-            lint: { valid: lintResult.valid, error: lintResult.error },
             tokenUsage,
-            rubric,
-          });
-          continue;
+            fixPrompt
+          );
+          turnsUsed += fixResult.turns;
+          if (fixResult.success) {
+            lintResult = await config.lint(sandboxDir, task);
+            if (!lintResult.valid) {
+              console.log(`  Lint still failing after fix: ${lintResult.error}`);
+            }
+          } else {
+            console.log(`  Lint fix attempt failed: ${fixResult.error}`);
+          }
         }
       }
 
@@ -707,7 +715,7 @@ async function runBenchmark(
           task,
           pass: false,
           expected,
-          turns: agentResult.turns,
+          turns: turnsUsed,
           error: validation.error,
           durationMs: Date.now() - startTime,
           toolUsage,
@@ -737,7 +745,7 @@ async function runBenchmark(
         pass,
         expected,
         actual: validation.actual,
-        turns: agentResult.turns,
+        turns: turnsUsed,
         durationMs: Date.now() - startTime,
         toolUsage,
         lint: lintResult ? { valid: lintResult.valid, error: lintResult.error } : undefined,

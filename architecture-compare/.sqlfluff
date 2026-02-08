@@ -1,0 +1,4 @@
+[sqlfluff]
+dialect = duckdb
+templater = raw
+exclude_rules = L009
