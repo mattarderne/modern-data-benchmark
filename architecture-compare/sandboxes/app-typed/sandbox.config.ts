@@ -134,7 +134,7 @@ console.log(JSON.stringify({ result: typeof result === 'number' ? result : null 
     }
   },
 
-  lint: async (sandboxDir: string): Promise<ValidationResult> => {
+  lint: async (sandboxDir: string, _task: Task, options?: { mode?: 'full' | 'schema' }): Promise<ValidationResult> => {
     const queriesPath = path.join(sandboxDir, 'src/analytics/queries.ts');
     if (!fs.existsSync(queriesPath)) {
       return { valid: false, error: 'queries.ts not found for linting' };
@@ -154,7 +154,12 @@ console.log(JSON.stringify({ result: typeof result === 'number' ? result : null 
       return { valid: true };
     } catch (err) {
       const output = (err as any)?.stdout?.toString() || (err instanceof Error ? err.message : String(err));
-      return { valid: false, error: `TypeScript typecheck failed: ${output.slice(0, 400)}` };
+      const trimmed = output.slice(0, 400);
+      if (options?.mode === 'schema') {
+        const schemaLike = /Property '.*' does not exist on type|Cannot find name|cannot find module/i.test(trimmed);
+        if (!schemaLike) return { valid: true };
+      }
+      return { valid: false, error: `TypeScript typecheck failed: ${trimmed}` };
     }
   },
 };

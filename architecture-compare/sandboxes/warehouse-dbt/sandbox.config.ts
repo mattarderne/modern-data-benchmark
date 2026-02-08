@@ -248,7 +248,7 @@ db.all(sql, (err, rows) => {
     }
   },
 
-  lint: async (sandboxDir: string, task: Task): Promise<ValidationResult> => {
+  lint: async (sandboxDir: string, task: Task, options?: { mode?: 'full' | 'schema' }): Promise<ValidationResult> => {
     const actualSqlPath = resolveSqlPath(sandboxDir, task);
     if (!actualSqlPath || !fs.existsSync(actualSqlPath)) {
       return { valid: false, error: `No SQL file matching ${task.sqlFile} found for linting` };
@@ -259,15 +259,17 @@ db.all(sql, (err, rows) => {
       return { valid: false, error: 'SQL does not contain SELECT' };
     }
 
-    try {
-      execSync(`python3 -m sqlfluff lint --dialect duckdb --nocolor "${actualSqlPath}" 2>&1`, {
-        cwd: PROJECT_DIR,
-        encoding: 'utf8',
-        timeout: 30000,
-      });
-    } catch (err) {
-      const output = (err as any)?.stdout?.toString() || (err instanceof Error ? err.message : String(err));
-      return { valid: false, error: `SQLFluff lint failed: ${output.slice(0, 300)}` };
+    if (options?.mode !== 'schema') {
+      try {
+        execSync(`python3 -m sqlfluff lint --dialect duckdb --nocolor "${actualSqlPath}" 2>&1`, {
+          cwd: PROJECT_DIR,
+          encoding: 'utf8',
+          timeout: 30000,
+        });
+      } catch (err) {
+        const output = (err as any)?.stdout?.toString() || (err instanceof Error ? err.message : String(err));
+        return { valid: false, error: `SQLFluff lint failed: ${output.slice(0, 300)}` };
+      }
     }
 
     const viewStatements = buildViewStatements(sandboxDir, actualSqlPath);
@@ -325,11 +327,20 @@ try {
 
       const parsed = JSON.parse(output.trim());
       if (parsed.error) {
-        return { valid: false, error: `SQL lint error: ${parsed.error}` };
+        const errMsg = String(parsed.error);
+        if (options?.mode === 'schema') {
+          const schemaLike = /column|table|relation|no such|unknown|does not exist|invalid identifier/i.test(errMsg);
+          if (!schemaLike) return { valid: true };
+        }
+        return { valid: false, error: `SQL lint error: ${errMsg}` };
       }
       return { valid: true };
     } catch (error: any) {
       const msg = error.stdout?.toString() || error.message;
+      if (options?.mode === 'schema') {
+        const schemaLike = /column|table|relation|no such|unknown|does not exist|invalid identifier/i.test(msg);
+        if (!schemaLike) return { valid: true };
+      }
       return { valid: false, error: `DuckDB lint error: ${msg.slice(0, 300)}` };
     }
   },

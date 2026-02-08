@@ -44,7 +44,11 @@ export interface SandboxConfig {
   validate: (sandboxDir: string, task: Task) => Promise<ValidationResult>;
 
   // Optional lint step before validation
-  lint?: (sandboxDir: string, task: Task) => Promise<ValidationResult>;
+  lint?: (
+    sandboxDir: string,
+    task: Task,
+    options?: { mode?: 'full' | 'schema' }
+  ) => Promise<ValidationResult>;
 
   // Optional: setup hook (e.g., install dependencies, create db)
   setup?: (sandboxDir: string) => Promise<void>;

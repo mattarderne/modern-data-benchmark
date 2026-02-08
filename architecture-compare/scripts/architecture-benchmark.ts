@@ -607,7 +607,8 @@ async function runBenchmark(
   maxTurns: number,
   data: DataBundle,
   tasks: Task[],
-  lintEnabled: boolean
+  lintEnabled: boolean,
+  lintMode: 'full' | 'schema'
 ): Promise<BenchmarkResult[]> {
   const results: BenchmarkResult[] = [];
 
@@ -676,7 +677,7 @@ async function runBenchmark(
 
       if (lintEnabled && config.lint) {
         console.log(`  Linting...`);
-        lintResult = await config.lint(sandboxDir, task);
+        lintResult = await config.lint(sandboxDir, task, { mode: lintMode });
         if (!lintResult.valid) {
           console.log(`\n  ✗ LINT FAIL: ${lintResult.error}`);
           console.log('  Attempting lint fix (1 turn window)...');
@@ -807,6 +808,8 @@ async function main() {
   const outputPath = args.find(a => a.startsWith('--output='))?.split('=')[1];
   const driftArg = args.find(a => a.startsWith('--drift='))?.split('=')[1] as DriftMode | undefined;
   const lintEnabled = !args.includes('--no-lint');
+  const lintModeArg = args.find(a => a.startsWith('--lint-mode='))?.split('=')[1];
+  const lintMode = lintModeArg === 'schema' ? 'schema' : 'full';
 
   const drift: DriftMode = driftArg || 'none';
 
@@ -828,7 +831,7 @@ async function main() {
   console.log(`Drift:     ${drift}`);
   console.log('='.repeat(70));
 
-  const results = await runBenchmark(sandboxIds, model, taskIds, maxTurns, driftedData, tasks, lintEnabled);
+  const results = await runBenchmark(sandboxIds, model, taskIds, maxTurns, driftedData, tasks, lintEnabled, lintMode);
 
   printSummary(results);
 
