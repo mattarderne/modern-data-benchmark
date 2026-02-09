@@ -5,30 +5,30 @@ This repository contains multiple benchmark experiments for assessing LLM perfor
 ## Experiments
 
 1. Baseline Architecture Benchmark (Typed/DBT/Drizzle/Cube)
-See `artifacts/reports/modular-benchmark-writeup.md`.
+See [artifacts/reports/modular-benchmark-writeup.md](artifacts/reports/modular-benchmark-writeup.md).
 
 2. App + Stripe vs Warehouse + DBT Architecture Benchmark
-See `artifacts/reports/architecture-benchmark-2026-02-07.md`.
+See [artifacts/reports/architecture-benchmark-2026-02-07.md](artifacts/reports/architecture-benchmark-2026-02-07.md).
 
 3. Linting Experiment (Option B: tsc + sqlfluff + EXPLAIN)
-See `artifacts/reports/linting-experiment-2026-02-08.md`.
+See [artifacts/reports/linting-experiment-2026-02-08.md](artifacts/reports/linting-experiment-2026-02-08.md).
 
 ## Report Index
 
 Baseline (legacy modular benchmark)
-- Report: `artifacts/reports/modular-benchmark-writeup.md`
+- Report: [artifacts/reports/modular-benchmark-writeup.md](artifacts/reports/modular-benchmark-writeup.md)
 - Legacy charts: `artifacts/reports/benchmark_*.png`
 
 Architecture benchmark (app + Stripe vs warehouse)
-- Main report: `artifacts/reports/architecture-benchmark-2026-02-07.md`
-- Runs (multi-run): `artifacts/reports/architecture_runs_2026-02-07/`
-- Runs (1-pass cost-sensitive): `artifacts/reports/architecture_runs_2026-02-08/`
-- Runs (lint gated): `artifacts/reports/architecture_runs_2026-02-08-lint/`
-- Runs (lint helper): `artifacts/reports/architecture_runs_2026-02-08-lint-helper/`
+- Main report: [artifacts/reports/architecture-benchmark-2026-02-07.md](artifacts/reports/architecture-benchmark-2026-02-07.md)
+- Runs (multi-run): [artifacts/reports/architecture_runs_2026-02-07/](artifacts/reports/architecture_runs_2026-02-07/)
+- Runs (1-pass cost-sensitive): [artifacts/reports/architecture_runs_2026-02-08/](artifacts/reports/architecture_runs_2026-02-08/)
+- Runs (lint gated): [artifacts/reports/architecture_runs_2026-02-08-lint/](artifacts/reports/architecture_runs_2026-02-08-lint/)
+- Runs (lint helper): [artifacts/reports/architecture_runs_2026-02-08-lint-helper/](artifacts/reports/architecture_runs_2026-02-08-lint-helper/)
 - Summaries: `artifacts/reports/architecture_sampling_summary*.json`
 
 Linting experiment (focused analysis)
-- Report: `artifacts/reports/linting-experiment-2026-02-08.md`
+- Report: [artifacts/reports/linting-experiment-2026-02-08.md](artifacts/reports/linting-experiment-2026-02-08.md)
 
 ## Cost Curve
 
