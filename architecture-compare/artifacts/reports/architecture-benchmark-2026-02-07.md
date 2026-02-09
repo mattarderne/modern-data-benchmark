@@ -151,6 +151,7 @@ Pass counts are out of 3 tasks per sandbox:
 |---|---:|---:|---:|---:|
 | claude-3-5-haiku-20241022 | 1/3 | 0/3 | 0/3 | 1 |
 | claude-sonnet-4-20250514 | 2/3 | 0/3 | 0/3 | 2 |
+| claude-opus-4-5 | 2/3 | 3/3 | 1/3 | 6 |
 
 Token usage and cost summary:
 
@@ -158,8 +159,9 @@ Token usage and cost summary:
 |---|---:|---:|---:|---:|
 | claude-3-5-haiku-20241022 | 143,657 | 24,377 | 0.0174 | 0.0174 |
 | claude-sonnet-4-20250514 | 232,100 | 44,100 | 1.3578 | 0.6789 |
+| claude-opus-4-5 | 75,830 | 9,739 | 0.6226 | 0.1038 |
 
-![Architecture Benchmark Cost Curve (1-pass)](architecture_benchmark_cost_curve_2026-02-08-1pass.png)
+![Architecture Benchmark Cost Curve (1-pass)](architecture_benchmark_cost_curve_2026-02-09-1pass.png)
 
 ![Architecture Benchmark Rubric Score (1-pass)](architecture_benchmark_rubric_model_2026-02-08-1pass.png)
 
