@@ -34,7 +34,7 @@ models:
       - name: tokens
       - name: latency_ms
       - name: usage_created_at
-        description: "Timestamp of API usage event; use for active-user windows"
+        description: "Timestamp of API usage event; CAST to TIMESTAMP before date math (e.g., CAST(usage_created_at AS TIMESTAMP))"
 
   - name: stg_stripe_customers
     description: "Stripe customers staged from raw_stripe_customers"
