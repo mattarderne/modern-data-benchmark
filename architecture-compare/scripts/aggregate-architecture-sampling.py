@@ -43,6 +43,14 @@ KEY_FILES = {
         'models/staging/stg_stripe_invoices.sql',
         'models/staging/stg_stripe_subscriptions.sql',
     ],
+    'warehouse-dbt-documented': [
+        'models/schema.yml',
+        'models/staging/stg_app_api_usage.sql',
+        'models/staging/stg_app_users.sql',
+        'models/staging/stg_app_organizations.sql',
+        'models/staging/stg_stripe_invoices.sql',
+        'models/staging/stg_stripe_subscriptions.sql',
+    ],
 }
 
 

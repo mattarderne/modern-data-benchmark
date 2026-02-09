@@ -13,6 +13,9 @@ See [artifacts/reports/architecture-benchmark-2026-02-07.md](artifacts/reports/a
 3. Linting Experiment (Option B: tsc + sqlfluff + EXPLAIN)
 See [artifacts/reports/linting-experiment-2026-02-08.md](artifacts/reports/linting-experiment-2026-02-08.md).
 
+4. Warehouse DBT Documented Sandbox Experiment
+See [artifacts/reports/warehouse-dbt-documented-experiment-2026-02-09.md](artifacts/reports/warehouse-dbt-documented-experiment-2026-02-09.md).
+
 ## Report Index
 
 Baseline (legacy modular benchmark)
@@ -29,6 +32,9 @@ Architecture benchmark (app + Stripe vs warehouse)
 
 Linting experiment (focused analysis)
 - Report: [artifacts/reports/linting-experiment-2026-02-08.md](artifacts/reports/linting-experiment-2026-02-08.md)
+
+Warehouse DBT documented sandbox (planned run)
+- Report: [artifacts/reports/warehouse-dbt-documented-experiment-2026-02-09.md](artifacts/reports/warehouse-dbt-documented-experiment-2026-02-09.md)
 
 ## Cost Curve
 

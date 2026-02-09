@@ -574,9 +574,9 @@ async function testAppDrizzle(expected: ReturnType<typeof computeExpected>): Pro
   return allPass;
 }
 
-async function testWarehouseDbt(expected: ReturnType<typeof computeExpected>): Promise<boolean> {
-  console.log('\n--- Testing: warehouse-dbt ---');
-  const sandboxDir = setupSandbox('warehouse-dbt');
+async function testWarehouseDbt(expected: ReturnType<typeof computeExpected>, sandboxId = 'warehouse-dbt'): Promise<boolean> {
+  console.log(`\n--- Testing: ${sandboxId} ---`);
+  const sandboxDir = setupSandbox(sandboxId);
 
   fs.writeFileSync(path.join(sandboxDir, 'models/marts/fct_active_user_arpu.sql'), WAREHOUSE_SQL.active_user_arpu.trim());
   fs.writeFileSync(path.join(sandboxDir, 'models/marts/fct_org_churn_rate.sql'), WAREHOUSE_SQL.org_churn_rate.trim());
@@ -617,6 +617,7 @@ async function main() {
   results['app-typed'] = await testAppTyped(expected);
   results['app-drizzle'] = await testAppDrizzle(expected);
   results['warehouse-dbt'] = await testWarehouseDbt(expected);
+  results['warehouse-dbt-documented'] = await testWarehouseDbt(expected, 'warehouse-dbt-documented');
 
   console.log('\n' + '='.repeat(60));
   console.log('SUMMARY');
