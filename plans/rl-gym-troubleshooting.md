@@ -29,6 +29,7 @@ Interpretation: post-1 directional claim is plausible, but we still need a tight
 In scope now:
 - Controlled ORM vs DBT comparison on the existing metric tasks (ARPU, churn, LTV).
 - Fair DBT construction and parity checks.
+- A **dbt-realistic** pre-troubleshooting check where DBT is evaluated with source app/ORM context included (as in real troubleshooting).
 - Replication-quality reporting.
 
 Out of scope until the validation gate passes:
@@ -45,6 +46,9 @@ Out of scope until the validation gate passes:
   - Start from `warehouse-dbt-documented`.
   - Include staging timestamp normalization (`CAST(created_at AS TIMESTAMP)` pattern from cast experiment).
   - Keep this as a single named sandbox (for example `warehouse-dbt-fair`) to avoid result fragmentation.
+- DBT-realistic side (required before troubleshooting):
+  - Add a `warehouse-dbt-realistic` comparator that preserves DBT layers **and** exposes source app/ORM artifacts as first-class context.
+  - Intent: reflect realistic debugging where analysts/agents inspect both upstream app logic and downstream dbt/warehouse logic.
 
 ### A2) Enforce strict parity
 
@@ -68,14 +72,30 @@ Out of scope until the validation gate passes:
 - Secondary diagnostics:
   - Failure mode taxonomy (schema mismatch, type/cast, join logic, file/path, max-turn).
   - File-read/tool-usage patterns by sandbox.
+  - For `warehouse-dbt-realistic`, split tool usage into:
+    - app/ORM surface touched
+    - warehouse/dbt surface touched
+    - cross-layer traversal rate (did the agent actually connect source and warehouse layers?)
 
-### A4) Decision gate
+### A4) Realistic DBT pre-gate (mandatory)
+
+Before troubleshooting, run a dedicated realism check:
+
+- Compare `app-drizzle` vs `warehouse-dbt-realistic` under matched settings.
+- Require explicit access to source app + warehouse/dbt context in the DBT condition.
+- Confirm the DBT result is not being driven by an unrealistic "DBT-only" debugging setup.
+
+Deliverable from this step:
+- A short note in the post-1 report: whether adding realistic source-app surface materially changes ORM-vs-DBT results.
+
+### A5) Decision gate
 
 Proceed to troubleshooting gym only if all are true:
 
 - Re-run reproduces a meaningful ORM advantage under matched settings.
 - Result is stable across runs (not single-run artifact).
 - DBT comparator is documented and defensible as "carefully constructed", not a strawman.
+- `warehouse-dbt-realistic` result is measured and interpreted (not skipped).
 
 If gate fails:
 - Iterate on fairness setup first (do not add troubleshooting complexity yet).

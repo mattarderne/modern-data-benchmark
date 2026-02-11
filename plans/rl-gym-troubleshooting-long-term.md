@@ -34,6 +34,16 @@ Key insight: the existing drift injection is already halfway to bug injection. `
 
 Add new sandbox types and a new task type to the existing harness. The `SandboxConfig` interface and agent loop stay the same. New tools get added to the tool executor. New validation logic checks diagnosis instead of numeric output.
 
+### Pre-troubleshooting realism gate (required)
+
+Before running troubleshooting tasks, include a **dbt-realistic** comparison pass where the DBT environment explicitly includes the source app/ORM surface area.
+
+- Add a `warehouse-dbt-realistic` comparator that keeps DBT layers and also exposes upstream app/ORM code/data artifacts.
+- Require agents to be able to audit both upstream app context and downstream warehouse/dbt context.
+- Record cross-layer traversal (did the agent actually inspect both source app and DBT layers).
+
+Intent: realistic DBT troubleshooting normally requires checking both source application logic and DBT/warehouse logic, not DBT in isolation.
+
 ### Bug injection
 
 **Primary bug: idempotency failure (partial ETL re-run)**
@@ -171,6 +181,13 @@ The key comparison metric: **steps to correct diagnosis** across the two sandbox
 
 ## Implementation Steps
 
+### Phase 0: DBT-realistic pre-gate
+
+0. [ ] Add `warehouse-dbt-realistic` sandbox variant for pre-troubleshooting validation
+0. [ ] Ensure source app/ORM artifacts are available in the DBT condition (not DBT-only context)
+0. [ ] Run matched comparison (`app-drizzle` vs `warehouse-dbt-realistic`) on existing metric tasks
+0. [ ] Add explicit note in the report on whether realistic source-app surface changes ORM-vs-DBT outcomes
+
 ### Phase 1: Bug injection & data setup
 
 1. [ ] Add `BugType` and `Diagnosis` types to `sandboxes/types.ts`
@@ -229,6 +246,7 @@ The key comparison metric: **steps to correct diagnosis** across the two sandbox
 
 ## Success Criteria
 
+- [ ] DBT-realistic pre-gate completed and interpreted before troubleshooting rollout
 - [ ] Both sandboxes produce correct symptoms (bugged metric value vs clean expected value)
 - [ ] At least one model can correctly diagnose the bug in each sandbox
 - [ ] Measurable difference in steps-to-diagnosis between ORM and warehouse (hypothesis: 2-3x fewer steps in ORM)
