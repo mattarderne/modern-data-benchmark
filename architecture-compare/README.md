@@ -17,7 +17,7 @@ See [artifacts/reports/linting-experiment-2026-02-08.md](artifacts/reports/linti
 See [artifacts/reports/warehouse-dbt-documented-experiment-2026-02-09.md](artifacts/reports/warehouse-dbt-documented-experiment-2026-02-09.md).
 
 5. Post-1 Validation: Fair DBT vs App Drizzle (stable OpenRouter set)
-See [artifacts/reports/post1-validation-fair-dbt-2026-02-11.md](artifacts/reports/post1-validation-fair-dbt-2026-02-11.md).
+See [artifacts/reports/experiments/post1-fair-2026-02-11/post1-validation-fair-dbt-2026-02-11.md](artifacts/reports/experiments/post1-fair-2026-02-11/post1-validation-fair-dbt-2026-02-11.md).
 
 ## Report Index
 
@@ -40,9 +40,10 @@ Warehouse DBT documented sandbox (planned run)
 - Report: [artifacts/reports/warehouse-dbt-documented-experiment-2026-02-09.md](artifacts/reports/warehouse-dbt-documented-experiment-2026-02-09.md)
 
 Post-1 validation (fair DBT comparator)
-- Report: [artifacts/reports/post1-validation-fair-dbt-2026-02-11.md](artifacts/reports/post1-validation-fair-dbt-2026-02-11.md)
-- Stable runs: `artifacts/reports/post1_validation_runs_2026-02-11-stable/`
-- Stable summary: `artifacts/reports/architecture_sampling_summary_post1-fair-2026-02-11-stable.json`
+- Experiment directory: `artifacts/reports/experiments/post1-fair-2026-02-11/`
+- Report: [artifacts/reports/experiments/post1-fair-2026-02-11/post1-validation-fair-dbt-2026-02-11.md](artifacts/reports/experiments/post1-fair-2026-02-11/post1-validation-fair-dbt-2026-02-11.md)
+- Stable runs: `artifacts/reports/experiments/post1-fair-2026-02-11/post1_validation_runs_2026-02-11-stable/`
+- Stable summary: `artifacts/reports/experiments/post1-fair-2026-02-11/architecture_sampling_summary_post1-fair-2026-02-11-stable.json`
 
 ## Architecture Diagrams
 
